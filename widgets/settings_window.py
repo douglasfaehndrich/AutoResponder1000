@@ -29,6 +29,38 @@ class SettingsWindow(QWidget):  # <-- Inherit from QWidget
             if key.endswith("Recipients") or key.endswith("CC"):
                 continue  # Recipients/CC handled in main template group if needed
 
+            # Special handling for Default Signature
+            if key == "Default Signature":
+                group = QGroupBox("Default Signature")
+                group.setStyleSheet("""
+                    QGroupBox {
+                        font-size: 15px;
+                        font-weight: bold;
+                        border: 2px solid #0078d7;
+                        border-radius: 8px;
+                        margin-top: 8px;
+                    }
+                    QGroupBox:title {
+                        subcontrol-origin: margin;
+                        left: 10px;
+                        padding: 0 3px 0 3px;
+                    }
+                """)
+                group_layout = QVBoxLayout()
+                group_layout.setSpacing(8)
+                group_layout.addWidget(QLabel("Your default signature (added to most responses):"))
+                edit = QTextEdit()
+                edit.setPlainText(value)
+                edit.setMinimumHeight(60)
+                edit.setMaximumHeight(80)
+                edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                edit.setStyleSheet("font-family: Consolas, monospace; font-size: 13px;")
+                group_layout.addWidget(edit)
+                self.text_edits[key] = edit
+                group.setLayout(group_layout)
+                content_layout.addWidget(group)
+                continue
+
             group = QGroupBox(key)
             group.setStyleSheet("""
                 QGroupBox {
@@ -133,6 +165,13 @@ class SettingsWindow(QWidget):  # <-- Inherit from QWidget
         if "WB Report CC" in self.input_fields:
             self.parent.responses["WB Report CC"] = self.input_fields["WB Report CC"].text()
         self.parent.save_responses(self.parent.responses)
+
+        # Update the main window's signature field if it was changed
+        if "Default Signature" in self.text_edits:
+            self.parent.signature_text.blockSignals(True)  # Prevent triggering save again
+            self.parent.signature_text.setPlainText(self.parent.responses["Default Signature"])
+            self.parent.signature_text.blockSignals(False)
+
         from PyQt5.QtWidgets import QMessageBox
         QMessageBox.information(self, "Saved", "Responses updated.")
         self.close()

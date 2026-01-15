@@ -41,7 +41,11 @@ class AutoResponderApp(QWidget):
         sig_label = QLabel("Signature:")
         self.signature_text = QTextEdit()
         self.signature_text.setFixedHeight(60)
-        self.signature_text.setPlainText("Thank you,\nDoug Faehndrich")
+        # Load signature from responses.json
+        default_sig = self.responses.get("Default Signature", "Thank you,\n[Your Name]")
+        self.signature_text.setPlainText(default_sig)
+        # Save signature when it changes
+        self.signature_text.textChanged.connect(self.save_signature)
         sig_layout.addWidget(sig_label)
         sig_layout.addWidget(self.signature_text)
         self.signature_box.setLayout(sig_layout)
@@ -107,6 +111,11 @@ class AutoResponderApp(QWidget):
 
     def get_signature(self):
         return self.signature_text.toPlainText().strip()
+
+    def save_signature(self):
+        """Save signature to responses.json when it changes"""
+        self.responses["Default Signature"] = self.signature_text.toPlainText()
+        save_responses(self.responses)
 
     def process_subject(self):
         subject = self.subject_entry.text()
