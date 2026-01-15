@@ -106,6 +106,11 @@ class AutoResponderApp(QWidget):
         self.responses["Default Signature"] = self.signature_text.toPlainText()
         save_responses(self.responses)
 
+    def save_responses(self, responses):
+        """Save responses to JSON file - called by SettingsWindow"""
+        save_responses(responses)
+        self.responses = responses
+
     def process_subject(self):
         subject = self.subject_entry.text()
         allowed_prefixes = r'CB|SEPH|JJ|RLC|SC'
