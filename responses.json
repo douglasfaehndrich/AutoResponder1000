@@ -1,7 +1,7 @@
 {
-    "Default Signature": "Thank you,\n[Name]\n",
+    "Default Signature": "Thank you,\n[Your Name]\n",
     "Strickland Clock Ins": {
-        "prefixes": "CB, SEPH, JJ, RLC, SC",
+        "prefixes": "CB, SEPH, JJ, RLC, SC, CUBE, OPM",
         "response_template": "{{CODE}} - Guard clocked in on time."
     },
     "PIN Confirmation": {

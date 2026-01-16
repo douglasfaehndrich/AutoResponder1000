@@ -27,8 +27,8 @@ env/
 Thumbs.db
 desktop.ini
 
-# PyInstaller
-*.spec
+# PyInstaller (keep .spec file, but ignore build artifacts)
+# *.spec  # We want to keep the spec file
 *.manifest
 
 # Application specific
