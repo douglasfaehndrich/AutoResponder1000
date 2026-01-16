@@ -45,14 +45,11 @@ class RateNTEWindow(QWidget):
 
     def _handle_shift(self, dialog, shift_num, another):
         date = dialog.date_edit.date().toString("MM/dd/yyyy")
-        # Use combo boxes for time selection
-        start_time_str = dialog.start_time_combo.currentText()
-        end_time_str = dialog.end_time_combo.currentText()
-
-        # Parse times and calculate hours
-        from PyQt5.QtCore import QTime
-        start_time = QTime.fromString(start_time_str, "hh:mm AP")
-        end_time = QTime.fromString(end_time_str, "hh:mm AP")
+        # Use QTimeEdit widgets for time selection
+        start_time = dialog.start_time_edit.time()
+        end_time = dialog.end_time_edit.time()
+        start_time_str = start_time.toString("hh:mm AP")
+        end_time_str = end_time.toString("hh:mm AP")
 
         # Calculate hours, handle overnight shifts
         start_dt = QDateTime(dialog.date_edit.date(), start_time)
