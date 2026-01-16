@@ -34,8 +34,9 @@ class AutoResponderApp(QWidget):
         # Load signature from responses.json
         default_sig = self.responses.get("Default Signature", "Thank you,\n[Your Name]")
         self.signature_text.setPlainText(default_sig)
-        # Save signature when it changes
-        self.signature_text.textChanged.connect(self.save_signature)
+        # Save signature when editing is finished (not on every keystroke)
+        self.signature_text.textChanged.connect(self.on_signature_changed)
+        self.signature_save_timer = None
         sig_layout.addWidget(sig_label)
         sig_layout.addWidget(self.signature_text)
         self.signature_box.setLayout(sig_layout)
@@ -101,10 +102,23 @@ class AutoResponderApp(QWidget):
     def get_signature(self):
         return self.signature_text.toPlainText().strip()
 
+    def on_signature_changed(self):
+        """Debounce signature saving - wait for user to stop typing"""
+        from PyQt5.QtCore import QTimer
+        if self.signature_save_timer:
+            self.signature_save_timer.stop()
+        self.signature_save_timer = QTimer()
+        self.signature_save_timer.setSingleShot(True)
+        self.signature_save_timer.timeout.connect(self.save_signature)
+        self.signature_save_timer.start(1000)  # Save 1 second after user stops typing
+
     def save_signature(self):
-        """Save signature to responses.json when it changes"""
-        self.responses["Default Signature"] = self.signature_text.toPlainText()
-        save_responses(self.responses)
+        """Save signature to responses.json"""
+        try:
+            self.responses["Default Signature"] = self.signature_text.toPlainText()
+            save_responses(self.responses)
+        except Exception as e:
+            QMessageBox.warning(self, "Save Error", f"Could not save signature: {e}")
 
     def save_responses(self, responses):
         """Save responses to JSON file - called by SettingsWindow"""
@@ -112,18 +126,20 @@ class AutoResponderApp(QWidget):
         self.responses = responses
 
     def process_subject(self):
-        subject = self.subject_entry.text()
-        allowed_prefixes = r'CB|SEPH|JJ|RLC|SC'
-        pattern = r'\b(?:CB|SEPH|JJ|RLC|SC)\d+\b'
-        store_codes = re.findall(pattern, subject, re.IGNORECASE)
-        store_codes = [code.upper() for code in store_codes]
-        if not store_codes:
-            QMessageBox.warning(self, "No Codes Found", "No matching store codes were found in the subject.")
-            return
-        body_lines = [f"{code} - Guard clocked in on time." for code in store_codes]
-        body = "\n".join(body_lines) + "\n\n" + self.get_signature()
-        pyperclip.copy(body)
-        QMessageBox.information(self, "Copied", f"Clock-in response for {len(store_codes)} store(s) copied to clipboard.")
+        try:
+            subject = self.subject_entry.text()
+            pattern = r'\b(?:CB|SEPH|JJ|RLC|SC)\d+\b'
+            store_codes = re.findall(pattern, subject, re.IGNORECASE)
+            store_codes = [code.upper() for code in store_codes]
+            if not store_codes:
+                QMessageBox.warning(self, "No Codes Found", "No matching store codes were found in the subject.")
+                return
+            body_lines = [f"{code} - Guard clocked in on time." for code in store_codes]
+            body = "\n".join(body_lines) + "\n\n" + self.get_signature()
+            pyperclip.copy(body)
+            QMessageBox.information(self, "Copied", f"Clock-in response for {len(store_codes)} store(s) copied to clipboard.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"An error occurred: {e}")
 
     def copy_response(self, response_key):
         response_text = self.responses[response_key]
