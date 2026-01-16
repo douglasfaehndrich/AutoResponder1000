@@ -61,6 +61,51 @@ class SettingsWindow(QWidget):  # <-- Inherit from QWidget
                 content_layout.addWidget(group)
                 continue
 
+            # Special handling for Strickland Clock Ins
+            if key == "Strickland Clock Ins":
+                group = QGroupBox("Strickland Clock Ins Settings")
+                group.setStyleSheet("""
+                    QGroupBox {
+                        font-size: 15px;
+                        font-weight: bold;
+                        border: 2px solid #0078d7;
+                        border-radius: 8px;
+                        margin-top: 8px;
+                    }
+                    QGroupBox:title {
+                        subcontrol-origin: margin;
+                        left: 10px;
+                        padding: 0 3px 0 3px;
+                    }
+                """)
+                group_layout = QVBoxLayout()
+                group_layout.setSpacing(8)
+
+                # Prefixes field
+                group_layout.addWidget(QLabel("Store Code Prefixes (comma-separated):"))
+                prefixes_edit = QLineEdit()
+                prefixes_edit.setText(value.get("prefixes", "CB, SEPH, JJ, RLC, SC"))
+                prefixes_edit.setPlaceholderText("e.g. CB, SEPH, JJ, RLC, SC")
+                group_layout.addWidget(prefixes_edit)
+                self.input_fields["Strickland Clock Ins Prefixes"] = prefixes_edit
+
+                # Response template field
+                group_layout.addWidget(QLabel("Response Template (use {{CODE}} for store code):"))
+                template_edit = QLineEdit()
+                template_edit.setText(value.get("response_template", "{{CODE}} - Guard clocked in on time."))
+                template_edit.setPlaceholderText("{{CODE}} - Guard clocked in on time.")
+                group_layout.addWidget(template_edit)
+                self.input_fields["Strickland Clock Ins Template"] = template_edit
+
+                # Info label
+                info_label = QLabel("The app will search email subjects for codes like CB123, SEPH456, etc.")
+                info_label.setStyleSheet("color: #888; font-style: italic; font-size: 12px;")
+                group_layout.addWidget(info_label)
+
+                group.setLayout(group_layout)
+                content_layout.addWidget(group)
+                continue
+
             group = QGroupBox(key)
             group.setStyleSheet("""
                 QGroupBox {
@@ -159,11 +204,23 @@ class SettingsWindow(QWidget):  # <-- Inherit from QWidget
                 self.parent.responses[key]["template"] = edit.toPlainText()
             else:
                 self.parent.responses[key] = edit.toPlainText()
+
         # Save WB Report Recipients and CC
         if "WB Report Recipients" in self.input_fields:
             self.parent.responses["WB Report Recipients"] = self.input_fields["WB Report Recipients"].text()
         if "WB Report CC" in self.input_fields:
             self.parent.responses["WB Report CC"] = self.input_fields["WB Report CC"].text()
+
+        # Save Strickland Clock Ins settings
+        if "Strickland Clock Ins Prefixes" in self.input_fields:
+            if "Strickland Clock Ins" not in self.parent.responses:
+                self.parent.responses["Strickland Clock Ins"] = {}
+            self.parent.responses["Strickland Clock Ins"]["prefixes"] = self.input_fields["Strickland Clock Ins Prefixes"].text()
+        if "Strickland Clock Ins Template" in self.input_fields:
+            if "Strickland Clock Ins" not in self.parent.responses:
+                self.parent.responses["Strickland Clock Ins"] = {}
+            self.parent.responses["Strickland Clock Ins"]["response_template"] = self.input_fields["Strickland Clock Ins Template"].text()
+
         self.parent.save_responses(self.parent.responses)
 
         # Update the main window's signature field if it was changed

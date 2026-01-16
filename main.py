@@ -128,13 +128,26 @@ class AutoResponderApp(QWidget):
     def process_subject(self):
         try:
             subject = self.subject_entry.text()
-            pattern = r'\b(?:CB|SEPH|JJ|RLC|SC)\d+\b'
+
+            # Get settings from responses.json
+            clockin_settings = self.responses.get("Strickland Clock Ins", {})
+            prefixes_str = clockin_settings.get("prefixes", "CB, SEPH, JJ, RLC, SC")
+            response_template = clockin_settings.get("response_template", "{{CODE}} - Guard clocked in on time.")
+
+            # Parse prefixes (remove spaces and split by comma)
+            prefixes = [p.strip() for p in prefixes_str.split(",")]
+            # Create regex pattern from prefixes
+            prefix_pattern = "|".join(prefixes)
+            pattern = rf'\b(?:{prefix_pattern})\d+\b'
+
             store_codes = re.findall(pattern, subject, re.IGNORECASE)
             store_codes = [code.upper() for code in store_codes]
             if not store_codes:
-                QMessageBox.warning(self, "No Codes Found", "No matching store codes were found in the subject.")
+                QMessageBox.warning(self, "No Codes Found", f"No matching store codes were found in the subject.\nLooking for prefixes: {prefixes_str}")
                 return
-            body_lines = [f"{code} - Guard clocked in on time." for code in store_codes]
+
+            # Generate response lines using template
+            body_lines = [response_template.replace("{{CODE}}", code) for code in store_codes]
             body = "\n".join(body_lines) + "\n\n" + self.get_signature()
             pyperclip.copy(body)
             QMessageBox.information(self, "Copied", f"Clock-in response for {len(store_codes)} store(s) copied to clipboard.")

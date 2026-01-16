@@ -1,5 +1,9 @@
 {
-    "Default Signature": "Thank you,\n[Your Name]",
+    "Default Signature": "Thank you,\n[Name]\n",
+    "Strickland Clock Ins": {
+        "prefixes": "CB, SEPH, JJ, RLC, SC",
+        "response_template": "{{CODE}} - Guard clocked in on time."
+    },
     "PIN Confirmation": {
         "template": "Thank you for your bid. The rate has been approved and I have attached the work order. Please confirm when you receive it.\n\nKindly provide us with the guard's name and number prior to the post.\n\nThe PIN for this post is <b>{{PIN}}</b>.\n\nPlease ensure the guard clocks in and out using the designated system.\n\nPlease submit invoices within 1 week of service completion to prevent billing delays.",
         "fields": [
