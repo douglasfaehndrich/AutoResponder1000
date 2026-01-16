@@ -98,7 +98,7 @@ class SettingsWindow(QWidget):  # <-- Inherit from QWidget
                 self.input_fields["Strickland Clock Ins Template"] = template_edit
 
                 # Info label
-                info_label = QLabel("The app will search email subjects for codes like CB123, SEPH456, etc.")
+                info_label = QLabel("The app will search email subjects for codes like CB0123, SEPH0456, etc.")
                 info_label.setStyleSheet("color: #888; font-style: italic; font-size: 12px;")
                 group_layout.addWidget(info_label)
 
