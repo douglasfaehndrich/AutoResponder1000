@@ -123,6 +123,7 @@ class AutoResponderApp(QWidget):
         body_lines = [f"{code} - Guard clocked in on time." for code in store_codes]
         body = "\n".join(body_lines) + "\n\n" + self.get_signature()
         pyperclip.copy(body)
+        QMessageBox.information(self, "Copied", f"Clock-in response for {len(store_codes)} store(s) copied to clipboard.")
 
     def copy_response(self, response_key):
         response_text = self.responses[response_key]
@@ -145,6 +146,7 @@ class AutoResponderApp(QWidget):
         response = template.replace("{{Rate}}", rate)
         response += "\n\n" + self.get_signature()
         pyperclip.copy(response)
+        QMessageBox.information(self, "Copied", "Rate approval response copied to clipboard.")
 
     def copy_pin_confirmation(self, pin_input):
         pin = pin_input.text().strip()
@@ -157,6 +159,7 @@ class AutoResponderApp(QWidget):
         response = template.replace("{{PIN}}", html_pin)
         response += "\n\n" + self.get_signature()
         copy_html_to_clipboard(response)
+        QMessageBox.information(self, "Copied", "PIN confirmation response copied to clipboard.")
 
     def open_settings(self):
         self.settings_window = SettingsWindow(self)
