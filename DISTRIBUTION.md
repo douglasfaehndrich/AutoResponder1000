@@ -8,13 +8,13 @@
    - `AutoResponder1000.exe` - The application
    - `responses.template.json` - Template configuration file
 
-2. **Create your configuration**:
-   - Copy `responses.template.json` and rename it to `responses.json`
-   - Place `responses.json` in the same folder as `AutoResponder1000.exe`
+2. **Run the application**:
+   - Double-click `AutoResponder1000.exe`
+   - The app will automatically create `responses.json` from the template on first run
+   - Keep both files in the same folder
 
 3. **Customize your settings**:
-   - Double-click `AutoResponder1000.exe` to run the app
-   - Click the "Settings" button
+   - Click the "Settings" button in the app
    - Update:
      - Your default signature (replace `[Your Name]` with your name)
      - Email addresses for WB Report
@@ -60,9 +60,10 @@
 
 ### Troubleshooting
 
-**"responses.json not found" error:**
-- Make sure `responses.json` exists in the same folder as the .exe
-- Copy `responses.template.json` and rename it to `responses.json`
+**"responses.json not found" or template errors:**
+- Make sure `responses.template.json` is in the same folder as the .exe
+- The app will automatically create `responses.json` from the template
+- If you deleted `responses.json`, just restart the app to recreate it
 
 **Settings not saving:**
 - Check that the folder is not read-only

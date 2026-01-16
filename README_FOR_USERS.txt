@@ -4,18 +4,16 @@
 
 FIRST TIME SETUP:
 -----------------
-1. Copy "responses.template.json" and rename it to "responses.json"
-   (Keep them in the same folder as AutoResponder1000.exe)
+1. Run AutoResponder1000.exe
+   (The app will automatically create responses.json from the template)
 
-2. Run AutoResponder1000.exe
+2. Click "Settings" button
 
-3. Click "Settings" button
+3. Change "[Your Name]" to your actual name in the Default Signature
 
-4. Change "[Your Name]" to your actual name in the Default Signature
+4. Update email addresses in WB Report section if needed
 
-5. Update email addresses in WB Report section if needed
-
-6. Click "Save"
+5. Click "Save"
 
 
 HOW TO USE:
